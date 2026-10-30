@@ -136,7 +136,7 @@ class DesktopMate:
             while True:
                 kind, message = self.messages.get_nowait()
                 if kind == "status":
-                    self.set_status(message)
+                    self.set_status(message[:100])
                 elif kind == "exit":
                     self.root.destroy()
                     return
