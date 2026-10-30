@@ -189,50 +189,29 @@ def handle_command(text):
 
 # ---------------- MAIN LOOP ----------------
 
+def respond_to_voice(user_text):
+    result = handle_command(user_text)
+
+    if result == "__EXIT__":
+        return "Goodbye! আবার কথা হবে।", True
+
+    if result is None:
+        result = ask_ai(user_text)
+
+    return result, False
+
+
 def main():
     init_db()
 
-    speak(
-        "Hello! I am Lin. "
-        "আমি বাংলা ও ইংরেজিতে কথা বলতে পারি।"
-    )
+    from desktopMate import DesktopMate
 
-    print("\nlin AI is running.")
-    print("Speak a command, or type a command.")
-    print("Say 'stop assistant' to exit.")
-
-    while True:
-        try:
-            mode = input(
-                "\nPress Enter for voice, or type a message: "
-            )
-
-            if mode.strip():
-                user_text = mode.strip()
-            else:
-                user_text = listen()
-
-            if not user_text:
-                continue
-
-            result = handle_command(user_text)
-
-            if result == "__EXIT__":
-                speak("Goodbye! আবার কথা হবে।")
-                break
-
-            if result is None:
-                result = ask_ai(user_text)
-
-            speak(result)
-
-        except KeyboardInterrupt:
-            print("\nAssistant stopped.")
-            break
-        except Exception as exc:
-            print("Unexpected error:", exc)
-
-    shutdown_voice()
+    DesktopMate(
+        listen=listen,
+        respond=respond_to_voice,
+        speak=speak,
+        shutdown_voice=shutdown_voice,
+    ).run()
 
 
 if __name__ == "__main__":
